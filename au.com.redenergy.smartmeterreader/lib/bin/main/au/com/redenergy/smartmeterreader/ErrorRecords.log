@@ -1,0 +1,4 @@
+Feb 10, 2022 2:15:19 AM au.com.redenergy.smartmeterreader.SimpleNem12ParserImpl parseSimpleNem12
+INFO: Logging the Error Records in here
+Feb 10, 2022 2:15:19 AM au.com.redenergy.smartmeterreader.SimpleNem12ParserImpl validateFileDetailed
+INFO: The SimpleNem12.csv file has an invalid file end parameter. Please check the file at C:\Users\prave\Praveen\eclipse-workspace\au.com.redenergy.smartmeterreader\lib\src\main\resources\SimpleNem12.csv Expected Value : 900 Actual value : 9002
