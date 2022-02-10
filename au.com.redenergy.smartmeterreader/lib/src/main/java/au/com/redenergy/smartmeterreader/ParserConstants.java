@@ -18,4 +18,7 @@ public final class ParserConstants {
 	public static final Integer FILE_METER_NMI_LENGTH = 10;
 	public static final String ERROR_LOGGING_FILE = "src/main/java/au/com/redenergy/smartmeterreader/ErrorRecords.log";
 
+	private ParserConstants() {
+
+	}
 }

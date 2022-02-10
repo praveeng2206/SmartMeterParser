@@ -36,7 +36,6 @@ public class SimpleNem12ParserImpl implements SimpleNem12Parser {
 	public Collection<MeterRead> parseSimpleNem12(File simpleNem12File) {
 		List<MeterRead> meterReadList = new ArrayList<>();
 
-		logger.log(Level.SEVERE, "Logging the Error Records in here");
 		AtomicBoolean validate = new AtomicBoolean(true);
 		if (!validateFileBasic(simpleNem12File, meterReadList)) {
 			return meterReadList;
@@ -89,7 +88,8 @@ public class SimpleNem12ParserImpl implements SimpleNem12Parser {
 					});
 
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE,
+					"IO Exception while reading the file  ");
 		}
 
 		return meterReadList;
