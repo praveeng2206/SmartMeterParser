@@ -3,12 +3,147 @@
  */
 package au.com.redenergy.smartmeterreader;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.util.Collection;
+
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 public class LibraryTest {
-    @Test public void testSomeLibraryMethod() {
-        Library classUnderTest = new Library();
-        assertTrue("someLibraryMethod should return 'true'", classUnderTest.someLibraryMethod());
-    }
+
+	private SimpleNem12Parser simpleNem12Parser;
+	private File simpleNem12File;
+
+	@Before
+	public void runBeforeEveryTest() {
+		simpleNem12Parser = new SimpleNem12ParserImpl();
+		simpleNem12File = new File("src/main/resources/SimpleNem12.csv");
+	}
+
+	@Test
+	public void fetchNmi6123456789() {
+		Collection<MeterRead> meterReads = simpleNem12Parser.parseSimpleNem12(simpleNem12File);
+		MeterRead meterRead = meterReads.stream().filter(mr -> mr.getNmi().equals("6123456789")).findFirst().get();
+		System.out.println();
+		assertEquals("Values in 6123456789 ", meterRead.getTotalVolume().doubleValue(), -36.84, 0);
+	}
+
+	@Test
+	public void fetchNmi6987654321() {
+		Collection<MeterRead> meterReads = simpleNem12Parser.parseSimpleNem12(simpleNem12File);
+		MeterRead meterRead = meterReads.stream().filter(mr -> mr.getNmi().equals("6987654321")).findFirst().get();
+		assertEquals("Values in 6987654321 ", meterRead.getTotalVolume().doubleValue(), 14.33, 0);
+
+	}
+
+	@Test
+	public void readNullFile() {
+		Collection<MeterRead> meterReads = simpleNem12Parser.parseSimpleNem12(null);
+		assertTrue(meterReads.isEmpty());
+	}
+
+	@Test
+	public void fetchNonExistantFile() {
+		Collection<MeterRead> meterReads = simpleNem12Parser.parseSimpleNem12(new File(""));
+		assertTrue(meterReads.isEmpty());
+	}
+
+	@Test
+	public void parseEmptyFile() {
+		simpleNem12File = new File("src/main/resources/SimpleNem12Empty.csv");
+		Collection<MeterRead> meterReads = simpleNem12Parser.parseSimpleNem12(simpleNem12File);
+		assertTrue(meterReads.isEmpty());
+	}
+
+	@Test
+	public void parseInvalidStartParamFile() {
+		simpleNem12File = new File("src/main/resources/SimpleNem12InvalidStartParam.csv");
+		Collection<MeterRead> meterReads = simpleNem12Parser.parseSimpleNem12(simpleNem12File);
+		assertTrue(meterReads.isEmpty());
+	}
+
+	@Test
+	public void parseInvalidEndParamFile() {
+		simpleNem12File = new File("src/main/resources/SimpleNem12InvalidEndParam.csv");
+		Collection<MeterRead> meterReads = simpleNem12Parser.parseSimpleNem12(simpleNem12File);
+		assertTrue(meterReads.isEmpty());
+	}
+
+	@Test
+	public void parseFirst200LineAbsentFile() {
+		simpleNem12File = new File("src/main/resources/SimpleNem12First200LineAbsent.csv");
+		Collection<MeterRead> meterReads = simpleNem12Parser.parseSimpleNem12(simpleNem12File);
+		MeterRead read6987654321 = meterReads.stream().filter(mr -> mr.getNmi().equals("6987654321")).findFirst().get();
+		assertEquals("Values in 6987654321 ", read6987654321.getTotalVolume().doubleValue(), 14.33, 0);
+	}
+
+	@Test
+	public void parseInvalidNMIRecordType200nSeriesFile() {
+		simpleNem12File = new File("src/main/resources/SimpleNem12InvalidNMIRecordType200nSeries.csv");
+		Collection<MeterRead> meterReads = simpleNem12Parser.parseSimpleNem12(simpleNem12File);
+		MeterRead read6987654321 = meterReads.stream().filter(mr -> mr.getNmi().equals("6987654321")).findFirst().get();
+		assertEquals("Values in 6987654321 ", read6987654321.getTotalVolume().doubleValue(), 14.33, 0);
+	}
+
+	@Test
+	public void parseInvalidNMIRecordType200nSeriesSecondHalfFile() {
+		simpleNem12File = new File("src/main/resources/SimpleNem12InvalidNMIRecordType200nSeriesSecondHalf.csv");
+		Collection<MeterRead> meterReads = simpleNem12Parser.parseSimpleNem12(simpleNem12File);
+		MeterRead read6123456789 = meterReads.stream().filter(mr -> mr.getNmi().equals("6123456789")).findFirst().get();
+		assertEquals("Values in 6123456789 ", read6123456789.getTotalVolume().doubleValue(), -36.84, 0);
+	}
+
+	@Test
+	public void parseInvalidNMILengthFile() {
+		simpleNem12File = new File("src/main/resources/SimpleNem12InvalidNMILength.csv");
+		Collection<MeterRead> meterReads = simpleNem12Parser.parseSimpleNem12(simpleNem12File);
+		MeterRead read6987654321 = meterReads.stream().filter(mr -> mr.getNmi().equals("6987654321")).findFirst().get();
+		assertEquals("Values in 6987654321 ", read6987654321.getTotalVolume().doubleValue(), 14.33, 0);
+	}
+
+	@Test
+	public void parseInvalidNMIEnergyUnitFile() {
+		simpleNem12File = new File("src/main/resources/SimpleNem12InvalidNMIEnergyUnit.csv");
+		Collection<MeterRead> meterReads = simpleNem12Parser.parseSimpleNem12(simpleNem12File);
+		MeterRead read6987654321 = meterReads.stream().filter(mr -> mr.getNmi().equals("6987654321")).findFirst().get();
+		assertEquals("Values in 6987654321 ", read6987654321.getTotalVolume().doubleValue(), 14.33, 0);
+	}
+
+	@Test
+	public void parseInvalidNMIParamsFile() {
+		simpleNem12File = new File("src/main/resources/SimpleNem12InvalidNMIParams.csv");
+		Collection<MeterRead> meterReads = simpleNem12Parser.parseSimpleNem12(simpleNem12File);
+		MeterRead read6123456789 = meterReads.stream().filter(mr -> mr.getNmi().equals("6123456789")).findFirst().get();
+		assertEquals("Values in 6123456789 ", read6123456789.getTotalVolume().doubleValue(), -36.84, 0);
+	}
+
+	@Test
+	public void parseInvalidNMIRecordType300nSeriesFile() {
+		simpleNem12File = new File("src/main/resources/SimpleNem12InvalidNMIRecordType300nSeries.csv");
+		Collection<MeterRead> meterReads = simpleNem12Parser.parseSimpleNem12(simpleNem12File);
+		MeterRead read6987654321 = meterReads.stream().filter(mr -> mr.getNmi().equals("6987654321")).findFirst().get();
+		assertEquals("Values in 6987654321 ", read6987654321.getTotalVolume().doubleValue(), 14.33, 0);
+	}
+
+	@Test
+	public void parseInvalidNMIRecordType300nSeriesSecondHalfFile() {
+		simpleNem12File = new File("src/main/resources/SimpleNem12InvalidNMIRecordType300nSeriesSecondHalf.csv");
+		Collection<MeterRead> meterReads = simpleNem12Parser.parseSimpleNem12(simpleNem12File);
+		MeterRead read6123456789 = meterReads.stream().filter(mr -> mr.getNmi().equals("6123456789")).findFirst().get();
+		assertEquals("Values in 6123456789 ", read6123456789.getTotalVolume().doubleValue(), -36.84, 0);
+	}
+
+	@Test
+	public void parseInvalidNMIVolumeParamsFile() {
+		simpleNem12File = new File("src/main/resources/SimpleNem12InvalidNMIVolumeParams.csv");
+		Collection<MeterRead> meterReads = simpleNem12Parser.parseSimpleNem12(simpleNem12File);
+		MeterRead read6987654321 = meterReads.stream().filter(mr -> mr.getNmi().equals("6987654321")).findFirst().get();
+		assertEquals("Values in 6987654321 ", read6987654321.getTotalVolume().doubleValue(), 14.33, 0);
+
+	}
+
 }
